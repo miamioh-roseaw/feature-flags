@@ -1,13 +1,40 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="style.css">
-    <title>Test</title>
+    <script src="https://unpkg.com/@optimizely/optimizely-sdk@3.5/dist/optimizely.browser.umd.min.js"></script>
+    <script src="https://cdn.optimizely.com/datafiles/<Your_SDK_KEY>.json/tag.js"></script>    //<-------------------Change this to match your SDK KEY!!!!!
   </head>
   <body>
-    <h1>Anthony (Tony) Rose, MBA</h1>
-    <h5>Does NodePort Work???</h5>
-    
-    Whoohoo!
+    <h1>Hello World</h1>
+    <p id="subtitle">This is a subtitle</p>
   </body>
+  <script>
+    var optimizely = optimizelySdk.createInstance({
+      datafile: window.optimizelyDatafile,
+    });
+
+    function getOrGenerateUserId() {
+      var userId;
+      try {
+        var storageKey = 'optimizely-userId'
+        userId = window.localStorage.getItem(storageKey);
+        if (!userId) {
+          userId = String(Math.random());
+          localStorage.setItem(storageKey, userId);
+        }
+      } catch {
+        console.warn('[OPTIMIZELY] LocalStorage not available to store userId. Generating random userId each page load');
+        userId = String(Math.random());
+      }
+      return userId;
+    }
+
+    var userId = getOrGenerateUserId();
+    var enabled = optimizelyClientInstance.isFeatureEnabled('hello_world', userId);
+    if (enabled) {
+      document.querySelector("#subtitle").innerText = "Feature flag is ON!"
+    } else {
+      document.querySelector("#subtitle").innerText = "Feature flag is off"
+    }
+  </script>
 </html>
